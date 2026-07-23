@@ -6,21 +6,20 @@ import { site } from "../../lib/site";
 
 const shoots = getPublishedShoots();
 const tags = getAllTags();
-const total = String(shoots.length).padStart(2, "0");
 ---
 
-<Layout title={`Work — ${site.name}`} description="촬영 건 목록">
+<Layout title={`작업 — ${site.name}`} description="촬영 건 목록">
   <section class="section wrap">
     <div class="section-head">
-      <h2>Work</h2>
-      <span class="count">{total} Projects</span>
+      <h2>작업</h2>
+      <p>{shoots.length}개의 프로젝트 · 태그로 골라볼 수 있어요.</p>
     </div>
 
     {
       tags.length > 0 && (
         <div class="tag-filter" id="tag-filter">
           <button class="tag-chip" data-tag="" data-active="true">
-            All
+            전체
           </button>
           {tags.map((t) => (
             <button class="tag-chip" data-tag={t} data-active="false">
@@ -33,9 +32,9 @@ const total = String(shoots.length).padStart(2, "0");
 
     <div class="work-grid" id="work-grid">
       {
-        shoots.map((s, i) => (
+        shoots.map((s) => (
           <div class="shoot-item" data-tags={s.tags.join(",")}>
-            <ShootCard shoot={s} index={i + 1} />
+            <ShootCard shoot={s} />
           </div>
         ))
       }
@@ -44,7 +43,7 @@ const total = String(shoots.length).padStart(2, "0");
     {
       shoots.length === 0 && (
         <p class="placeholder-note">
-          아직 공개된 촬영 건이 없다. content/index.csv에 status=published인 행을 추가하라.
+          아직 공개된 촬영 건이 없습니다. content/index.csv에 status=published인 행을 추가하세요.
         </p>
       )
     }

@@ -22,12 +22,12 @@ const nextTitle = next.titleKo || next.titleEn || next.slug;
 <Layout title={`${title} — ${site.name}`} description={`${title} · ${shoot.place}`}>
   <div class="wrap">
     <header class="detail-head">
-      <a class="back" href="/work">← Work</a>
+      <a class="back" href="/work">← 작업 목록</a>
       <h1>{title}</h1>
       <div class="detail-meta">
-        <span>{shoot.date}</span>
-        <span>{shoot.place}</span>
-        {shoot.tags.length > 0 && <span class="tags">{shoot.tags.join(" · ")}</span>}
+        <span class="m">{shoot.date}</span>
+        <span class="m">{shoot.place}</span>
+        {shoot.tags.map((t) => <span class="m tag">{t}</span>)}
       </div>
     </header>
 
@@ -36,8 +36,8 @@ const nextTitle = next.titleKo || next.titleEn || next.slug;
     </div>
 
     <nav class="detail-nav">
-      <a href="/work">← All work</a>
-      <a href={`/work/${next.slug}`}>{nextTitle} →</a>
+      <a href="/work">← 전체 작업</a>
+      <a href={`/work/${next.slug}`}>다음: {nextTitle} →</a>
     </nav>
   </div>
 </Layout>

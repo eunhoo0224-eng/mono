@@ -5,10 +5,9 @@ import { site } from "../lib/site";
 interface Props {
   title: string;
   description?: string;
-  fullBleed?: boolean;
 }
 
-const { title, description = site.tagline, fullBleed = false } = Astro.props;
+const { title, description = site.tagline } = Astro.props;
 const path = Astro.url.pathname;
 
 function isCurrent(href: string) {
@@ -30,18 +29,19 @@ const year = new Date().getFullYear();
     <meta property="og:description" content={description} />
     <link rel="icon" href="data:," />
   </head>
-  <body class={`page${fullBleed ? " full-bleed" : ""}`}>
+  <body class="page">
     <header class="site-header" id="site-header">
       <div class="wrap">
-        <a class="brand" href="/">
-          <span class="brand-mark">{site.name}</span>
-        </a>
-        <nav class="site-nav">
-          <a href="/" aria-current={isCurrent("/") ? "page" : undefined}>Index</a>
-          <a href="/work" aria-current={isCurrent("/work") ? "page" : undefined}>Work</a>
-          <a href="/about" aria-current={isCurrent("/about") ? "page" : undefined}>About</a>
-          <a href="/contact" aria-current={isCurrent("/contact") ? "page" : undefined}>Contact</a>
-        </nav>
+        <a class="brand" href="/">{site.name}</a>
+        <div class="nav-wrap">
+          <nav class="site-nav">
+            <a href="/" aria-current={isCurrent("/") ? "page" : undefined}>홈</a>
+            <a href="/work" aria-current={isCurrent("/work") ? "page" : undefined}>작업</a>
+            <a href="/about" aria-current={isCurrent("/about") ? "page" : undefined}>소개</a>
+            <a href="/contact" aria-current={isCurrent("/contact") ? "page" : undefined}>연락</a>
+          </nav>
+          <a class="btn btn-primary header-cta" href="/contact">문의하기</a>
+        </div>
       </div>
     </header>
 
@@ -51,13 +51,13 @@ const year = new Date().getFullYear();
 
     <footer class="site-footer">
       <div class="wrap">
-        <div class="footer-brand">{site.name}</div>
-        <div class="footer-meta">
-          <div>© {year} {site.copyrightName}</div>
-          <div class="footer-social">
-            <a href={site.instagram.url} target="_blank" rel="noopener">Instagram</a>
-            <a href={`mailto:${site.email}`}>Email</a>
-          </div>
+        <div>
+          <div class="footer-brand">{site.name}</div>
+          <div class="footer-tag">© {year} {site.copyrightName} · {site.location}</div>
+        </div>
+        <div class="footer-links">
+          <a href={site.instagram.url} target="_blank" rel="noopener">Instagram</a>
+          <a href={`mailto:${site.email}`}>Email</a>
         </div>
       </div>
     </footer>
@@ -65,8 +65,7 @@ const year = new Date().getFullYear();
     <script>
       const header = document.getElementById("site-header");
       const onScroll = () => {
-        if (window.scrollY > 24) header?.classList.add("scrolled");
-        else header?.classList.remove("scrolled");
+        header?.classList.toggle("scrolled", window.scrollY > 8);
       };
       onScroll();
       window.addEventListener("scroll", onScroll, { passive: true });

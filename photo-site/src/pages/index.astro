@@ -7,46 +7,47 @@ import { site } from "../lib/site";
 const shoots = getPublishedShoots();
 const hero = shoots[0];
 const rest = shoots.slice(1, 7);
-const total = String(shoots.length).padStart(2, "0");
 ---
 
-<Layout title={`${site.name} — ${site.role}`} fullBleed>
-  {
-    hero && (
-      <section class="hero">
-        <img class="hero-img" src={hero.images[0]} alt={hero.titleKo || hero.titleEn} />
-        <div class="hero-content">
-          <div class="wrap">
-            <p class="label">{site.role} — {site.location}</p>
-            <h1 class="hero-title">{site.name}</h1>
-            <p class="hero-sub">{site.heroSub}</p>
-          </div>
+<Layout title={`${site.name} — ${site.role}`}>
+  <section class="hero wrap">
+    <span class="eyebrow">{site.role} · {site.location}</span>
+    <h1>
+      빛을 기다렸다가,<br />
+      <span class="accent">사람이 남긴 자리</span>를 찍습니다.
+    </h1>
+    <p class="sub">{site.heroSub}</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/work">작업 보러가기</a>
+      <a class="btn btn-ghost" href="/contact">문의하기</a>
+    </div>
+
+    {
+      hero && (
+        <div class="hero-figure">
+          <img src={hero.images[0]} alt={hero.titleKo || hero.titleEn} />
         </div>
-        <div class="scroll-cue">
-          <span></span>
-          Scroll
-        </div>
-      </section>
-    )
-  }
+      )
+    }
+  </section>
 
   <section class="section wrap">
     <div class="section-head">
-      <h2>Selected Work</h2>
-      <span class="count">{total} Projects</span>
+      <h2>대표 작업</h2>
+      <p>의뢰받은 순간과, 아무도 기다리지 않은 순간을 함께 모았습니다.</p>
     </div>
 
     {
       shoots.length > 0 ? (
         <div class="work-grid">
-          {hero && <ShootCard shoot={hero} index={1} feature />}
-          {rest.map((s, i) => (
-            <ShootCard shoot={s} index={i + 2} />
+          {hero && <ShootCard shoot={hero} feature />}
+          {rest.map((s) => (
+            <ShootCard shoot={s} />
           ))}
         </div>
       ) : (
         <p class="placeholder-note">
-          아직 공개된 촬영 건이 없다. content/index.csv에 status=published인 행을 추가하라.
+          아직 공개된 촬영 건이 없습니다. content/index.csv에 status=published인 행을 추가하세요.
         </p>
       )
     }

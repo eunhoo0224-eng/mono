@@ -3,14 +3,13 @@ import type { Shoot } from "../lib/shoots";
 
 interface Props {
   shoot: Shoot;
-  index: number;
   feature?: boolean;
 }
 
-const { shoot, index, feature = false } = Astro.props;
+const { shoot, feature = false } = Astro.props;
 const title = shoot.titleKo || shoot.titleEn || shoot.slug;
 const year = shoot.date?.slice(0, 4);
-const idx = String(index).padStart(2, "0");
+const badges = shoot.tags.slice(0, 3);
 ---
 
 <a class={`shoot-card${feature ? " feature" : ""}`} href={`/work/${shoot.slug}`}>
@@ -18,8 +17,16 @@ const idx = String(index).padStart(2, "0");
     <img src={shoot.images[0]} alt={title} loading="lazy" />
   </figure>
   <figcaption>
-    <span class="idx">{idx}</span>
+    {
+      badges.length > 0 && (
+        <div class="card-badges">
+          {badges.map((b) => (
+            <span class="badge">{b}</span>
+          ))}
+        </div>
+      )
+    }
     <h3 class="card-title">{title}</h3>
-    <span class="card-meta">{year} — {shoot.place}</span>
+    <p class="card-meta">{year} · {shoot.place}</p>
   </figcaption>
 </a>
