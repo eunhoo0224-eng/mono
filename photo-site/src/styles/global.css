@@ -134,24 +134,23 @@ main {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 50;
-  height: var(--header-h);
-  display: flex;
-  align-items: center;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: saturate(1.2) blur(12px);
   -webkit-backdrop-filter: saturate(1.2) blur(12px);
   border-bottom: 1px solid transparent;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
-.site-header.scrolled {
+.site-header.scrolled,
+.site-header.menu-open {
   border-bottom-color: var(--line);
 }
 
-.site-header .wrap {
+.site-header > .wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  height: var(--header-h);
 }
 
 .brand {
@@ -190,12 +189,73 @@ main {
   border-radius: 12px;
 }
 
+/* Hamburger (mobile only) */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 12px;
+}
+.menu-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  margin: 0 auto;
+  background: var(--fg);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+.site-header.menu-open .menu-toggle span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.site-header.menu-open .menu-toggle span:nth-child(2) {
+  opacity: 0;
+}
+.site-header.menu-open .menu-toggle span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem var(--gutter) 1.25rem;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: saturate(1.2) blur(12px);
+  -webkit-backdrop-filter: saturate(1.2) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.mobile-menu a:not(.btn) {
+  padding: 0.85rem 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--fg-2);
+  border-bottom: 1px solid var(--line);
+}
+.mobile-menu a[aria-current="page"] {
+  color: var(--blue);
+}
+.mobile-menu .btn {
+  margin-top: 0.85rem;
+  justify-content: center;
+}
+
 @media (max-width: 640px) {
-  .site-nav a:not([aria-current="page"]) {
+  .nav-wrap {
     display: none;
   }
-  .header-cta {
-    display: none;
+  .menu-toggle {
+    display: flex;
+  }
+  .mobile-menu:not([hidden]) {
+    display: flex;
   }
 }
 

@@ -15,6 +15,13 @@ function isCurrent(href: string) {
   return path.startsWith(href);
 }
 
+const nav = [
+  { href: "/", label: "홈" },
+  { href: "/work", label: "작업" },
+  { href: "/about", label: "소개" },
+  { href: "/contact", label: "연락" },
+];
+
 const year = new Date().getFullYear();
 ---
 
@@ -27,23 +34,49 @@ const year = new Date().getFullYear();
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
     <link rel="stylesheet" href="/fonts/pretendard/pretendard.css" />
-    <link rel="icon" href="data:," />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body class="page">
     <header class="site-header" id="site-header">
       <div class="wrap">
         <a class="brand" href="/">{site.name}</a>
+
         <div class="nav-wrap">
           <nav class="site-nav">
-            <a href="/" aria-current={isCurrent("/") ? "page" : undefined}>홈</a>
-            <a href="/work" aria-current={isCurrent("/work") ? "page" : undefined}>작업</a>
-            <a href="/about" aria-current={isCurrent("/about") ? "page" : undefined}>소개</a>
-            <a href="/contact" aria-current={isCurrent("/contact") ? "page" : undefined}>연락</a>
+            {
+              nav.map((n) => (
+                <a href={n.href} aria-current={isCurrent(n.href) ? "page" : undefined}>
+                  {n.label}
+                </a>
+              ))
+            }
           </nav>
           <a class="btn btn-primary header-cta" href="/contact">문의하기</a>
         </div>
+
+        <button
+          class="menu-toggle"
+          id="menu-toggle"
+          aria-label="메뉴 열기"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span></span><span></span><span></span>
+        </button>
       </div>
+
+      <nav class="mobile-menu" id="mobile-menu" hidden>
+        {
+          nav.map((n) => (
+            <a href={n.href} aria-current={isCurrent(n.href) ? "page" : undefined}>
+              {n.label}
+            </a>
+          ))
+        }
+        <a class="btn btn-primary" href="/contact">문의하기</a>
+      </nav>
     </header>
 
     <main>
@@ -65,11 +98,25 @@ const year = new Date().getFullYear();
 
     <script>
       const header = document.getElementById("site-header");
-      const onScroll = () => {
-        header?.classList.toggle("scrolled", window.scrollY > 8);
-      };
+      const onScroll = () => header?.classList.toggle("scrolled", window.scrollY > 8);
       onScroll();
       window.addEventListener("scroll", onScroll, { passive: true });
+
+      const toggle = document.getElementById("menu-toggle");
+      const menu = document.getElementById("mobile-menu");
+      const setOpen = (open: boolean) => {
+        toggle?.setAttribute("aria-expanded", String(open));
+        toggle?.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
+        header?.classList.toggle("menu-open", open);
+        if (menu) menu.hidden = !open;
+      };
+      toggle?.addEventListener("click", () => {
+        setOpen(toggle.getAttribute("aria-expanded") !== "true");
+      });
+      menu?.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 640) setOpen(false);
+      });
     </script>
   </body>
 </html>
