@@ -1,18 +1,22 @@
 ---
 import "../styles/global.css";
+import { site } from "../lib/site";
 
 interface Props {
   title: string;
   description?: string;
+  fullBleed?: boolean;
 }
 
-const { title, description = "사진 포트폴리오" } = Astro.props;
+const { title, description = site.tagline, fullBleed = false } = Astro.props;
 const path = Astro.url.pathname;
 
 function isCurrent(href: string) {
   if (href === "/") return path === "/";
   return path.startsWith(href);
 }
+
+const year = new Date().getFullYear();
 ---
 
 <!doctype html>
@@ -22,25 +26,50 @@ function isCurrent(href: string) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
     <link rel="icon" href="data:," />
   </head>
-  <body>
-    <header class="site-header">
+  <body class={`page${fullBleed ? " full-bleed" : ""}`}>
+    <header class="site-header" id="site-header">
       <div class="wrap">
-        <a class="site-title" href="/">사진가 이름</a>
+        <a class="brand" href="/">
+          <span class="brand-mark">{site.name}</span>
+        </a>
         <nav class="site-nav">
-          <a href="/" aria-current={isCurrent("/") ? "page" : undefined}>Home</a>
+          <a href="/" aria-current={isCurrent("/") ? "page" : undefined}>Index</a>
           <a href="/work" aria-current={isCurrent("/work") ? "page" : undefined}>Work</a>
           <a href="/about" aria-current={isCurrent("/about") ? "page" : undefined}>About</a>
           <a href="/contact" aria-current={isCurrent("/contact") ? "page" : undefined}>Contact</a>
         </nav>
       </div>
     </header>
+
     <main>
       <slot />
     </main>
+
     <footer class="site-footer">
-      <div class="wrap">© {new Date().getFullYear()} 사진가 이름. All rights reserved.</div>
+      <div class="wrap">
+        <div class="footer-brand">{site.name}</div>
+        <div class="footer-meta">
+          <div>© {year} {site.copyrightName}</div>
+          <div class="footer-social">
+            <a href={site.instagram.url} target="_blank" rel="noopener">Instagram</a>
+            <a href={`mailto:${site.email}`}>Email</a>
+          </div>
+        </div>
+      </div>
     </footer>
+
+    <script>
+      const header = document.getElementById("site-header");
+      const onScroll = () => {
+        if (window.scrollY > 24) header?.classList.add("scrolled");
+        else header?.classList.remove("scrolled");
+      };
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+    </script>
   </body>
 </html>

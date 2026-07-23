@@ -3,19 +3,23 @@ import type { Shoot } from "../lib/shoots";
 
 interface Props {
   shoot: Shoot;
+  index: number;
+  feature?: boolean;
 }
 
-const { shoot } = Astro.props;
+const { shoot, index, feature = false } = Astro.props;
 const title = shoot.titleKo || shoot.titleEn || shoot.slug;
 const year = shoot.date?.slice(0, 4);
+const idx = String(index).padStart(2, "0");
 ---
 
-<a class="shoot-card" href={`/work/${shoot.slug}`}>
+<a class={`shoot-card${feature ? " feature" : ""}`} href={`/work/${shoot.slug}`}>
   <figure>
     <img src={shoot.images[0]} alt={title} loading="lazy" />
   </figure>
   <figcaption>
-    <h3>{title}</h3>
-    <p class="shoot-meta">{year} · {shoot.place}</p>
+    <span class="idx">{idx}</span>
+    <h3 class="card-title">{title}</h3>
+    <span class="card-meta">{year} — {shoot.place}</span>
   </figcaption>
 </a>

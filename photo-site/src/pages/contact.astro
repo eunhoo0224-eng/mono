@@ -1,16 +1,37 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { site } from "../lib/site";
 ---
 
-<Layout title="Contact — 사진가 이름">
-  <section class="section wrap">
-    <h2 class="section-heading">Contact</h2>
-    <div class="prose">
-      <p>문의: <a href="mailto:hello@example.com">hello@example.com</a></p>
-      <p>Instagram: <a href="https://instagram.com/">@handle</a></p>
+<Layout title={`Contact — ${site.name}`}>
+  <div class="wrap editorial">
+    <div>
+      <p class="label">Contact</p>
+      <h1>Let's<br />work.</h1>
+    </div>
+    <div>
+      <p class="lede">
+        의뢰·협업·프린트 문의를 환영합니다.
+      </p>
+      <ul class="contact-list">
+        <li>
+          <span class="k">Email</span>
+          <span class="v"><a href={`mailto:${site.email}`}>{site.email}</a></span>
+        </li>
+        <li>
+          <span class="k">Instagram</span>
+          <span class="v">
+            <a href={site.instagram.url} target="_blank" rel="noopener">{site.instagram.handle}</a>
+          </span>
+        </li>
+        <li>
+          <span class="k">Based in</span>
+          <span class="v">{site.location}</span>
+        </li>
+      </ul>
       <p class="placeholder-note">
-        자리 표시자 연락처다. src/pages/contact.astro에서 실제 이메일·SNS 링크로 바꿔라.
+        자리 표시자 연락처입니다. src/lib/site.ts에서 실제 이메일·SNS로 바꾸세요.
       </p>
     </div>
-  </section>
+  </div>
 </Layout>
