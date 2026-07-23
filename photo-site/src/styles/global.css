@@ -18,8 +18,9 @@
   --blue-hover: #1b64da;
   --blue-weak: #e8f3ff;
 
-  --font: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-    Pretendard, "Malgun Gothic", "Noto Sans KR", Roboto, "Segoe UI",
+  /* Pretendard 셀프호스팅 (public/fonts/pretendard). 로드 실패 시 시스템 폴백. */
+  --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", Roboto, "Segoe UI",
     sans-serif;
 
   --container: 1120px;
