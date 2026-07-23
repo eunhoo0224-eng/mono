@@ -1,0 +1,21 @@
+---
+import type { Shoot } from "../lib/shoots";
+
+interface Props {
+  shoot: Shoot;
+}
+
+const { shoot } = Astro.props;
+const title = shoot.titleKo || shoot.titleEn || shoot.slug;
+const year = shoot.date?.slice(0, 4);
+---
+
+<a class="shoot-card" href={`/work/${shoot.slug}`}>
+  <figure>
+    <img src={shoot.images[0]} alt={title} loading="lazy" />
+  </figure>
+  <figcaption>
+    <h3>{title}</h3>
+    <p class="shoot-meta">{year} · {shoot.place}</p>
+  </figcaption>
+</a>

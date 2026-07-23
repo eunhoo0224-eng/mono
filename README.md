@@ -1,8 +1,18 @@
-# archive-tool
+# mono
+
+이 저장소는 두 프로젝트를 담는다.
+
+- [`archive_tool/`](./archive_tool) — `photo-archive/` 정리 CLI (아래 설명)
+- [`photo-site/`](./photo-site) — 사진 포트폴리오 웹사이트. 사용법은 [`photo-site/README.md`](./photo-site/README.md) 참고.
+
+두 프로젝트는 `archive-tool export`가 만드는 `20_web/` 웹용 사본을 통해서만 연결된다 —
+`photo-site`는 원본(RAW)을 절대 갖지 않는다.
+
+## archive-tool
 
 `photo-archive/` 정리 CLI. 규칙의 원본은 [`사진아카이브_분류체계.md`](./사진아카이브_분류체계.md), 도구의 계약과 금지 사항의 원본은 [`작업지시서_아카이브도구.md`](./작업지시서_아카이브도구.md)이다. 여기서는 사용법만 다룬다.
 
-## 설치
+### 설치
 
 ```bash
 # 외부 의존성 (메타데이터 처리)
@@ -11,7 +21,7 @@ sudo apt install libimage-exiftool-perl   # 또는 macOS: brew install exiftool
 pip install -e .
 ```
 
-## 사용
+### 사용
 
 ```bash
 # photo-archive/ 안에서 실행한다고 가정 (--archive-root로 다른 경로 지정 가능)
@@ -30,7 +40,7 @@ archive-tool check                                          # 규칙 위반 검�
 archive-tool status                                         # status 칸 기준 요약
 ```
 
-## 개발
+### 개발
 
 ```bash
 pip install -e ".[dev]"

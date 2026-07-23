@@ -1,0 +1,64 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ShootCard from "../../components/ShootCard.astro";
+import { getPublishedShoots, getAllTags } from "../../lib/shoots";
+
+const shoots = getPublishedShoots();
+const tags = getAllTags();
+---
+
+<Layout title="Work — 사진가 이름" description="촬영 건 목록">
+  <section class="section wrap">
+    <h2 class="section-heading">Work</h2>
+
+    {
+      tags.length > 0 && (
+        <div class="tag-filter" id="tag-filter">
+          <button class="tag-chip" data-tag="" data-active="true">
+            All
+          </button>
+          {tags.map((t) => (
+            <button class="tag-chip" data-tag={t} data-active="false">
+              {t}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="shoot-grid" id="shoot-grid">
+      {
+        shoots.map((s) => (
+          <div class="shoot-item" data-tags={s.tags.join(",")}>
+            <ShootCard shoot={s} />
+          </div>
+        ))
+      }
+    </div>
+
+    {shoots.length === 0 && (
+      <p class="placeholder-note">
+        아직 공개된 촬영 건이 없다. content/index.csv에 status=published인 행을 추가하라.
+      </p>
+    )}
+  </section>
+</Layout>
+
+<script>
+  const filterBar = document.getElementById("tag-filter");
+  const items = Array.from(document.querySelectorAll<HTMLElement>(".shoot-item"));
+
+  filterBar?.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".tag-chip");
+    if (!btn) return;
+
+    filterBar.querySelectorAll(".tag-chip").forEach((c) => c.setAttribute("data-active", "false"));
+    btn.setAttribute("data-active", "true");
+
+    const tag = btn.dataset.tag ?? "";
+    for (const item of items) {
+      const tags = (item.dataset.tags ?? "").split(",");
+      item.style.display = !tag || tags.includes(tag) ? "" : "none";
+    }
+  });
+</script>

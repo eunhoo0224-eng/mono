@@ -1,0 +1,5 @@
+id,date,track,slug,place,tags,count,status,title_ko,title_en,note
+001,2026-05-14,C,studio-portrait-sample,UNIST,studio;portrait,3,published,스튜디오 인물 (예시),Studio Portrait (Sample),샘플 데이터 — 실제 사진으로 교체
+002,2026-06-02,P,hangang-night-sample,서울,landscape,3,published,한강 야경 (예시),Hangang Night (Sample),샘플 데이터 — 실제 사진으로 교체
+003,2026-06-20,P,group-concept-sample,경주,studio;concept;group,3,published,그룹 컨셉 (예시),Group Concept (Sample),샘플 데이터 — 실제 사진으로 교체
+004,2026-07-01,C,event-snap-sample,울산,event,3,published,행사 스냅 (예시),Event Snap (Sample),샘플 데이터 — 실제 사진으로 교체

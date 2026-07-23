@@ -1,0 +1,37 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ShootCard from "../components/ShootCard.astro";
+import { getPublishedShoots } from "../lib/shoots";
+
+const shoots = getPublishedShoots();
+const hero = shoots[0];
+const rest = shoots.slice(0, 6);
+---
+
+<Layout title="사진가 이름 — 포트폴리오">
+  {
+    hero && (
+      <div class="hero">
+        <img src={hero.images[0]} alt={hero.titleKo || hero.titleEn} />
+        <div class="hero-caption">
+          <h1>{hero.titleKo || hero.titleEn}</h1>
+          <p>
+            {hero.date?.slice(0, 4)} · {hero.place}
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  <section class="section wrap">
+    <h2 class="section-heading">Selected Work</h2>
+    <div class="shoot-grid">
+      {rest.map((s) => <ShootCard shoot={s} />)}
+    </div>
+    {shoots.length === 0 && (
+      <p class="placeholder-note">
+        아직 공개된 촬영 건이 없다. content/index.csv에 status=published인 행을 추가하라.
+      </p>
+    )}
+  </section>
+</Layout>

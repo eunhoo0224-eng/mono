@@ -1,0 +1,32 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getPublishedShoots } from "../../lib/shoots";
+
+export function getStaticPaths() {
+  return getPublishedShoots().map((shoot) => ({
+    params: { slug: shoot.slug },
+    props: { shoot },
+  }));
+}
+
+const { shoot } = Astro.props;
+const title = shoot.titleKo || shoot.titleEn || shoot.slug;
+---
+
+<Layout title={`${title} — 사진가 이름`} description={`${title} · ${shoot.place}`}>
+  <div class="wrap">
+    <div class="shoot-detail-header">
+      <a class="back-link" href="/work">← Work</a>
+      <h1>{title}</h1>
+      <p class="shoot-meta">
+        {shoot.date} · {shoot.place}
+        {shoot.tags.length > 0 && <> · {shoot.tags.join(", ")}</>}
+      </p>
+    </div>
+    <div class="image-stack">
+      {shoot.images.map((src) => (
+        <img src={src} alt={title} loading="lazy" />
+      ))}
+    </div>
+  </div>
+</Layout>
