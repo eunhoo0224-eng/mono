@@ -6,9 +6,9 @@
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  --bg: #f7f6f3;      /* warm off-white paper */
-  --bg-soft: #edece7; /* 이미지 placeholder / 옅은 패널 */
-  --bg-sub: #f1f0ec;
+  --bg: #fdfdfc;      /* near-white (Soulpage 계열) */
+  --bg-soft: #efeeea; /* 이미지 placeholder / 옅은 패널 */
+  --bg-sub: #f5f4f0;
   --fg: #1a1a17;      /* near-black ink */
   --fg-2: #6a685f;    /* muted */
   --fg-3: #9a988f;    /* faint */
@@ -152,9 +152,10 @@ main {
   height: var(--header-h);
 }
 .brand {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1.15rem;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--fg);
 }
 .nav-wrap {
@@ -347,13 +348,18 @@ main {
 /* ── Work grid (flat, image-forward) ─────────────── */
 .work-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(2rem, 4vw, 3.25rem) clamp(1rem, 2vw, 1.75rem);
 }
 .work-grid .feature {
   grid-column: 1 / -1;
 }
-@media (max-width: 700px) {
+@media (max-width: 900px) {
+  .work-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
   .work-grid {
     grid-template-columns: 1fr;
     gap: 2.5rem;
@@ -382,32 +388,25 @@ main {
   transform: scale(1.03);
 }
 .shoot-card figcaption {
-  padding-top: 1rem;
+  padding-top: 1.15rem;
+  text-align: center;
 }
+/* 그리드에선 태그 배지를 숨겨 Soulpage식 깔끔한 캡션(제목·장소)만 남긴다. */
 .card-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-.badge {
-  font-size: var(--label);
-  font-weight: 600;
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-  color: var(--fg-3);
+  display: none;
 }
 .shoot-card .card-title {
   font-weight: 500;
-  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  letter-spacing: -0.015em;
   margin: 0;
   color: var(--fg);
 }
 .shoot-card .card-meta {
-  margin-top: 0.3rem;
+  margin-top: 0.35rem;
   color: var(--fg-3);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.01em;
 }
 
 /* ── Tag filter (text/underline, monochrome) ─────── */
@@ -718,9 +717,10 @@ main {
   gap: 1.5rem;
 }
 .footer-brand {
-  font-weight: 600;
-  font-size: 1.2rem;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 .footer-tag {
   color: var(--fg-3);
