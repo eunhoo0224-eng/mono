@@ -42,9 +42,6 @@ function fileName(src: string) {
           shoot.images.map((src, i) => (
             <figure class="carousel-slide" class:list={{ active: i === 0 }}>
               <img src={src} alt={`${title} ${i + 1}`} loading={i === 0 ? "eager" : "lazy"} />
-              <a class="carousel-dl" href={src} download={fileName(src)}>
-                ↓ 원본 다운로드
-              </a>
             </figure>
           ))
         }
@@ -61,7 +58,18 @@ function fileName(src: string) {
         </div>
       )
     }
-    <p class="carousel-hint">← 옆으로 넘겨보세요 →</p>
+
+    <div class="carousel-foot">
+      <a
+        class="btn btn-ghost carousel-download"
+        data-download
+        href={shoot.images[0]}
+        download={fileName(shoot.images[0])}
+      >
+        ↓ 원본 다운로드
+      </a>
+      {shoot.images.length > 1 && <span class="carousel-hint">← 옆으로 넘겨보세요 →</span>}
+    </div>
 
     <nav class="detail-nav">
       <a href="/work">← 전체 작업</a>
@@ -84,6 +92,9 @@ function fileName(src: string) {
     );
     if (!track || slides.length === 0) return;
 
+    const download = root.parentElement?.querySelector<HTMLAnchorElement>("[data-download]");
+    const srcOf = (s: HTMLElement) => s.querySelector("img")?.getAttribute("src") ?? "";
+
     let current = 0;
     const setActive = (i: number) => {
       current = i;
@@ -91,6 +102,11 @@ function fileName(src: string) {
       dots.forEach((d, n) => d.classList.toggle("active", n === i));
       if (prev) prev.disabled = i === 0;
       if (next) next.disabled = i === slides.length - 1;
+      if (download) {
+        const src = srcOf(slides[i]);
+        download.href = src;
+        download.setAttribute("download", src.split("/").pop() || "photo.jpg");
+      }
     };
 
     // 스크롤 중앙에 가장 가까운 슬라이드를 활성화
