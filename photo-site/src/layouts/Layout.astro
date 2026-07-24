@@ -67,6 +67,19 @@ const year = new Date().getFullYear();
               ))
             }
           </nav>
+          <a
+            class="nav-ig"
+            href={site.instagram.url}
+            target="_blank"
+            rel="noopener"
+            aria-label="Instagram"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
           <a class="btn btn-primary header-cta" href="/contact">문의하기</a>
         </div>
 
@@ -131,6 +144,28 @@ const year = new Date().getFullYear();
       window.addEventListener("resize", () => {
         if (window.innerWidth > 640) setOpen(false);
       });
+
+      // 스크롤 등장 효과: JS가 될 때만 요소를 숨겼다가 뷰포트 진입 시 부드럽게 나타낸다.
+      // (JS 실패 시엔 아무것도 숨기지 않아 콘텐츠는 항상 보인다.)
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const revealEls = document.querySelectorAll(
+        ".hero-figure, .section-head, .shoot-card, .detail-head, .carousel, .editorial > div"
+      );
+      if ("IntersectionObserver" in window && !prefersReduced) {
+        revealEls.forEach((el) => el.classList.add("reveal"));
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("in");
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.05 }
+        );
+        revealEls.forEach((el) => io.observe(el));
+      }
     </script>
   </body>
 </html>

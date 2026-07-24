@@ -197,6 +197,15 @@ main {
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
 }
+.nav-ig {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fg-3);
+  transition: color 0.18s ease;
+}
+.nav-ig:hover {
+  color: var(--fg);
+}
 
 /* Hamburger */
 .menu-toggle {
@@ -349,7 +358,8 @@ main {
 .work-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: clamp(2rem, 4vw, 3.25rem) clamp(1rem, 2vw, 1.75rem);
+  /* 세로(행) 간격은 넉넉히 — 캡션 자리 + 숨쉴 공간. 가로(열) 간격은 일정하게. */
+  gap: clamp(2.75rem, 5vw, 4.25rem) clamp(1.25rem, 2vw, 2rem);
 }
 .work-grid .feature {
   grid-column: 1 / -1;
@@ -523,7 +533,9 @@ main {
   max-height: 82vh;
   object-fit: contain;
   border-radius: var(--radius);
-  background: var(--bg-soft);
+  /* 세로 사진은 슬라이드보다 좁아 좌우에 여백이 생기는데, 페이지색으로 채워
+     레터박스가 눈에 안 띄게 한다(가로/세로 혼재 시 깔끔). */
+  background: var(--bg);
 }
 .carousel-nav {
   position: absolute;
@@ -751,6 +763,17 @@ main {
   border: 1px dashed var(--line);
   padding: 0.7rem 1rem;
   border-radius: var(--radius);
+}
+
+/* 스크롤 등장 효과 (JS가 .reveal 부여 → 뷰포트 진입 시 .in) */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
