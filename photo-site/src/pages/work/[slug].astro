@@ -17,6 +17,10 @@ export function getStaticPaths() {
 const { shoot, next } = Astro.props;
 const title = shoot.titleKo || shoot.titleEn || shoot.slug;
 const nextTitle = next.titleKo || next.titleEn || next.slug;
+
+function fileName(src: string) {
+  return src.split("/").pop() || "photo.jpg";
+}
 ---
 
 <Layout title={`${title} — ${site.name}`} description={`${title} · ${shoot.place}`}>
@@ -31,9 +35,33 @@ const nextTitle = next.titleKo || next.titleEn || next.slug;
       </div>
     </header>
 
-    <div class="image-stack">
-      {shoot.images.map((src) => <img src={src} alt={title} loading="lazy" />)}
+    <div class="carousel" data-carousel>
+      <button class="carousel-nav prev" type="button" aria-label="이전 사진">‹</button>
+      <div class="carousel-track" tabindex="0">
+        {
+          shoot.images.map((src, i) => (
+            <figure class="carousel-slide" class:list={{ active: i === 0 }}>
+              <img src={src} alt={`${title} ${i + 1}`} loading={i === 0 ? "eager" : "lazy"} />
+              <a class="carousel-dl" href={src} download={fileName(src)}>
+                ↓ 원본 다운로드
+              </a>
+            </figure>
+          ))
+        }
+      </div>
+      <button class="carousel-nav next" type="button" aria-label="다음 사진">›</button>
     </div>
+
+    {
+      shoot.images.length > 1 && (
+        <div class="carousel-dots" data-dots>
+          {shoot.images.map((_, i) => (
+            <button class="dot" class:list={{ active: i === 0 }} type="button" aria-label={`${i + 1}번째 사진`} />
+          ))}
+        </div>
+      )
+    }
+    <p class="carousel-hint">← 옆으로 넘겨보세요 →</p>
 
     <nav class="detail-nav">
       <a href="/work">← 전체 작업</a>
@@ -41,3 +69,61 @@ const nextTitle = next.titleKo || next.titleEn || next.slug;
     </nav>
   </div>
 </Layout>
+
+<script>
+  function initCarousel(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>(".carousel-track");
+    const slides = Array.from(root.querySelectorAll<HTMLElement>(".carousel-slide"));
+    const prev = root.querySelector<HTMLButtonElement>(".carousel-nav.prev");
+    const next = root.querySelector<HTMLButtonElement>(".carousel-nav.next");
+    const dots = Array.from(
+      (root.nextElementSibling?.matches?.("[data-dots]")
+        ? root.nextElementSibling
+        : root.parentElement?.querySelector("[data-dots]")
+      )?.querySelectorAll<HTMLButtonElement>(".dot") ?? []
+    );
+    if (!track || slides.length === 0) return;
+
+    let current = 0;
+    const setActive = (i: number) => {
+      current = i;
+      slides.forEach((s, n) => s.classList.toggle("active", n === i));
+      dots.forEach((d, n) => d.classList.toggle("active", n === i));
+      if (prev) prev.disabled = i === 0;
+      if (next) next.disabled = i === slides.length - 1;
+    };
+
+    // 스크롤 중앙에 가장 가까운 슬라이드를 활성화
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const mid = track.scrollLeft + track.clientWidth / 2;
+        let best = 0, bestDist = Infinity;
+        slides.forEach((s, n) => {
+          const c = s.offsetLeft + s.offsetWidth / 2;
+          const d = Math.abs(c - mid);
+          if (d < bestDist) { bestDist = d; best = n; }
+        });
+        if (best !== current) setActive(best);
+      });
+    };
+    track.addEventListener("scroll", onScroll, { passive: true });
+
+    const goTo = (i: number) => {
+      const n = Math.max(0, Math.min(slides.length - 1, i));
+      slides[n].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    };
+    prev?.addEventListener("click", () => goTo(current - 1));
+    next?.addEventListener("click", () => goTo(current + 1));
+    dots.forEach((d, n) => d.addEventListener("click", () => goTo(n)));
+    track.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") { e.preventDefault(); goTo(current + 1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); goTo(current - 1); }
+    });
+
+    setActive(0);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-carousel]").forEach(initCarousel);
+</script>

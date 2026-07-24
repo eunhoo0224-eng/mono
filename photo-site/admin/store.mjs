@@ -17,8 +17,10 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PHOTOS_DIR = path.join(ROOT, "public", "photos");
 const INDEX_CSV = path.join(ROOT, "content", "index.csv");
 
-const WEB_LONG_EDGE = 2560;
-const WEB_QUALITY = 82;
+// 화질 우선 + 다운로드 제공을 위해 긴 변 3840px(4K급), 품질 90.
+// 업로드하는 원본이 이보다 작으면 키우지 않으므로, 원본 해상도가 실질 상한이다.
+const WEB_LONG_EDGE = 3840;
+const WEB_QUALITY = 90;
 // 웹 스펙: GPS 등 원본 메타데이터는 제거하되 저작권은 박아넣는다.
 // (사진가 이름이 바뀌면 여기 또는 PHOTO_COPYRIGHT 환경변수로 바꾼다.)
 const COPYRIGHT = process.env.PHOTO_COPYRIGHT || "© Eunhoo Kim";
