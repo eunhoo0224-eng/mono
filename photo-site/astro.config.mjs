@@ -1,9 +1,8 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
-// 배포 도메인이 정해지면 site 값을 실제 주소로 바꾸세요.
-// (robots.txt의 Sitemap 줄도 같이 바꿔주면 됩니다.)
+// 나중에 커스텀 도메인(예: eunhookim.com)을 붙이면 이 값과 robots.txt만 바꾸면 된다.
 export default defineConfig({
-  site: "https://example.com",
+  site: "https://mono-9214.vercel.app",
   integrations: [sitemap()],
 });
