@@ -133,11 +133,11 @@ app.post("/api/publish", async (req, res) => {
     ];
     const rows = [header.join(",")];
     const summary = [];
+    const skipped = [];
 
     let idNum = 0;
     for (const c of collections) {
-      idNum++;
-      const slug = c.slug || slugify(c.titleEn || c.titleKo || `collection-${idNum}`);
+      const slug = c.slug || slugify(c.titleEn || c.titleKo || `collection-${idNum + 1}`);
       const track = c.track === "C" ? "C" : "P";
       const dir = path.join(PHOTOS_DIR, slug);
       fs.rmSync(dir, { recursive: true, force: true }); // 이 컬렉션은 상태 기준으로 새로 씀
@@ -152,17 +152,29 @@ app.post("/api/publish", async (req, res) => {
 
       let seq = 0;
       for (const name of ordered) {
-        seq++;
-        const out = path.join(dir, `${slug}_${String(seq).padStart(3, "0")}.jpg`);
-        await sharp(path.join(LIBRARY, name))
-          .rotate()
-          .resize({ width: DISPLAY_LONG_EDGE, height: DISPLAY_LONG_EDGE, fit: "inside", withoutEnlargement: true })
-          .toColorspace("srgb")
-          .withExif({ IFD0: { Copyright: COPYRIGHT, Artist: COPYRIGHT } })
-          .jpeg({ quality: DISPLAY_QUALITY, mozjpeg: true })
-          .toFile(out);
+        const out = path.join(dir, `${slug}_${String(seq + 1).padStart(3, "0")}.jpg`);
+        try {
+          await sharp(path.join(LIBRARY, name))
+            .rotate()
+            .resize({ width: DISPLAY_LONG_EDGE, height: DISPLAY_LONG_EDGE, fit: "inside", withoutEnlargement: true })
+            .toColorspace("srgb")
+            .withExif({ IFD0: { Copyright: COPYRIGHT, Artist: COPYRIGHT } })
+            .jpeg({ quality: DISPLAY_QUALITY, mozjpeg: true })
+            .toFile(out);
+          seq++; // 성공한 것만 번호를 매긴다 (건너뛴 파일로 번호가 비지 않게)
+        } catch (err) {
+          // 한 장이 안 읽혀도(예: sharp가 못 여는 HEIC) 전체를 멈추지 않고 건너뛴다.
+          skipped.push({ collection: slug, file: name, reason: String(err.message || err) });
+        }
       }
 
+      if (seq === 0) {
+        // 이 컬렉션은 실제로 쓸 수 있는 사진이 하나도 없었다 → 빈 폴더 제거하고 색인에서 뺀다.
+        fs.rmSync(dir, { recursive: true, force: true });
+        continue;
+      }
+
+      idNum++;
       const csvEsc = (v) => {
         const s = String(v ?? "");
         return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
@@ -187,7 +199,11 @@ app.post("/api/publish", async (req, res) => {
 
     fs.mkdirSync(path.dirname(INDEX_CSV), { recursive: true });
     fs.writeFileSync(INDEX_CSV, rows.join("\n") + "\n");
-    res.json({ ok: true, summary, message: `${summary.length}개 컬렉션 게시 완료. git commit/push 하면 사이트에 반영됩니다.` });
+    let message = `${summary.length}개 컬렉션 게시 완료. git commit/push 하면 사이트에 반영됩니다.`;
+    if (skipped.length) {
+      message += ` (읽지 못해 건너뛴 사진 ${skipped.length}장 — HEIC 등은 JPEG로 바꿔 다시 넣으세요.)`;
+    }
+    res.json({ ok: true, summary, skipped, message });
   } catch (e) {
     res.status(500).json({ ok: false, error: String(e.message || e) });
   }
