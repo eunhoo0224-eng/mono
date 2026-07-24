@@ -3,3 +3,8 @@ dist/
 .astro/
 .env
 .DS_Store
+
+# Organizer 로컬 데이터 (사진 원본·작업 상태는 커밋하지 않음)
+admin/library/*
+!admin/library/README.md
+admin/organize-state.json
