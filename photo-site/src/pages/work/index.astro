@@ -1,10 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import ShootCard from "../../components/ShootCard.astro";
-import { getPublishedShoots, getAllTags } from "../../lib/shoots";
+import { getPublishedShoots, getAllTags, getShootsByCategory } from "../../lib/shoots";
 import { site } from "../../lib/site";
 
 const shoots = getPublishedShoots();
+const groups = getShootsByCategory(); // 카테고리가 있으면 [{category, shoots}], 없으면 []
 const tags = getAllTags();
 ---
 
@@ -12,38 +13,52 @@ const tags = getAllTags();
   <section class="section wrap">
     <div class="section-head">
       <h2>작업</h2>
-      <p>{shoots.length}개의 프로젝트 · 태그로 골라볼 수 있어요.</p>
+      <p>{shoots.length}개의 프로젝트</p>
     </div>
 
     {
-      tags.length > 0 && (
-        <div class="tag-filter" id="tag-filter">
-          <button class="tag-chip" data-tag="" data-active="true">
-            전체
-          </button>
-          {tags.map((t) => (
-            <button class="tag-chip" data-tag={t} data-active="false">
-              {t}
-            </button>
-          ))}
-        </div>
-      )
-    }
-
-    <div class="work-grid" id="work-grid">
-      {
-        shoots.map((s) => (
-          <div class="shoot-item" data-tags={s.tags.join(",")}>
-            <ShootCard shoot={s} />
+      groups.length > 0 ? (
+        /* 카테고리(폴더)별로 depth를 나눠 보여준다 */
+        groups.map((g) => (
+          <div class="cat-group">
+            <h3 class="cat-heading">{g.category}</h3>
+            <div class="work-grid">
+              {g.shoots.map((s) => (
+                <ShootCard shoot={s} />
+              ))}
+            </div>
           </div>
         ))
-      }
-    </div>
+      ) : (
+        /* 카테고리가 아직 없으면 평평한 그리드 + 태그 필터 */
+        <>
+          {tags.length > 0 && (
+            <div class="tag-filter" id="tag-filter">
+              <button class="tag-chip" data-tag="" data-active="true">
+                전체
+              </button>
+              {tags.map((t) => (
+                <button class="tag-chip" data-tag={t} data-active="false">
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
+          <div class="work-grid" id="work-grid">
+            {shoots.map((s) => (
+              <div class="shoot-item" data-tags={s.tags.join(",")}>
+                <ShootCard shoot={s} />
+              </div>
+            ))}
+          </div>
+        </>
+      )
+    }
 
     {
       shoots.length === 0 && (
         <p class="placeholder-note">
-          아직 공개된 촬영 건이 없습니다. content/index.csv에 status=published인 행을 추가하세요.
+          아직 공개된 촬영 건이 없습니다. 정리 도구(npm run organize)에서 분류·게시하세요.
         </p>
       )
     }
@@ -52,19 +67,18 @@ const tags = getAllTags();
 
 <script>
   const filterBar = document.getElementById("tag-filter");
-  const items = Array.from(document.querySelectorAll<HTMLElement>(".shoot-item"));
-
-  filterBar?.addEventListener("click", (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".tag-chip");
-    if (!btn) return;
-
-    filterBar.querySelectorAll(".tag-chip").forEach((c) => c.setAttribute("data-active", "false"));
-    btn.setAttribute("data-active", "true");
-
-    const tag = btn.dataset.tag ?? "";
-    for (const item of items) {
-      const itemTags = (item.dataset.tags ?? "").split(",");
-      item.style.display = !tag || itemTags.includes(tag) ? "" : "none";
-    }
-  });
+  if (filterBar) {
+    const items = Array.from(document.querySelectorAll<HTMLElement>(".shoot-item"));
+    filterBar.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".tag-chip");
+      if (!btn) return;
+      filterBar.querySelectorAll(".tag-chip").forEach((c) => c.setAttribute("data-active", "false"));
+      btn.setAttribute("data-active", "true");
+      const tag = btn.dataset.tag ?? "";
+      for (const item of items) {
+        const itemTags = (item.dataset.tags ?? "").split(",");
+        item.style.display = !tag || itemTags.includes(tag) ? "" : "none";
+      }
+    });
+  }
 </script>

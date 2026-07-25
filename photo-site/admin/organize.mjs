@@ -129,7 +129,7 @@ app.post("/api/publish", async (req, res) => {
     const collections = state.collections.filter((c) => c.photos.length > 0);
 
     const header = [
-      "id","date","track","slug","place","tags","count","status","title_ko","title_en","note",
+      "id","date","track","slug","category","place","tags","count","status","title_ko","title_en","note",
     ];
     const rows = [header.join(",")];
     const summary = [];
@@ -185,6 +185,7 @@ app.post("/api/publish", async (req, res) => {
           c.date || new Date().toISOString().slice(0, 10),
           track,
           slug,
+          c.category || "",
           c.place || "",
           (c.tags || []).join(";"),
           String(seq),

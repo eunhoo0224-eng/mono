@@ -95,9 +95,22 @@ function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show"
 
 async function load(){
   data=await (await fetch("/api/data")).json();
+  if(!Array.isArray(data.state.categories))data.state.categories=[];
   $("#libcount").textContent=`라이브러리 ${data.libraryCount}장 · 미분류 ${data.unassigned.length}장`;
   if(view!=="unassigned" && !coll(view))view="unassigned";
   render();
+}
+function allCategories(){
+  const cats=[...(data.state.categories||[])];
+  for(const c of data.state.collections){if(c.category&&!cats.includes(c.category))cats.push(c.category)}
+  return cats;
+}
+function addCategory(){
+  const name=(prompt("새 카테고리(폴더) 이름 — 예: 인물, 풍경, 행사")||"").trim();
+  if(!name)return;
+  data.state.categories=data.state.categories||[];
+  if(!data.state.categories.includes(name))data.state.categories.push(name);
+  scheduleSave();render();
 }
 function scheduleSave(){
   $("#savestatus").textContent="저장 중…";
@@ -130,8 +143,8 @@ function assign(names,targetId){
   $("#libcount").textContent=`라이브러리 ${data.libraryCount}장 · 미분류 ${data.unassigned.length}장`;
   render();
 }
-function addCollection(){
-  const c={id:uid(),slug:"",titleKo:"",titleEn:"",date:new Date().toISOString().slice(0,10),place:"",track:"P",tags:[],cover:null,photos:[]};
+function addCollection(category=""){
+  const c={id:uid(),slug:"",titleKo:"",titleEn:"",date:new Date().toISOString().slice(0,10),place:"",track:"P",tags:[],category:category||"",cover:null,photos:[]};
   data.state.collections.push(c);scheduleSave();view=c.id;render();
 }
 function delCollection(id){
@@ -149,11 +162,25 @@ function render(){renderSide();renderToolbar();renderMeta();renderGrid()}
 function renderSide(){
   const s=$("#side");s.innerHTML="";
   s.appendChild(makeSideItem("unassigned",`미분류`,data.unassigned.length,null));
-  const h=document.createElement("h2");h.textContent="컬렉션";s.appendChild(h);
-  for(const c of data.state.collections){
-    s.appendChild(makeSideItem(c.id,c.titleKo||c.titleEn||"(제목 없음)",c.photos.length,c.cover));
+
+  const cats=allCategories();
+  // 카테고리별로 묶어서(depth) 표시. 맨 뒤에 카테고리 없는 컬렉션.
+  for(const cat of [...cats, ""]){
+    const colls=data.state.collections.filter(c=>(c.category||"")===cat);
+    if(cat==="" && colls.length===0) continue;
+    const h=document.createElement("h2");h.textContent=cat||"카테고리 없음";s.appendChild(h);
+    for(const c of colls){
+      s.appendChild(makeSideItem(c.id,c.titleKo||c.titleEn||"(제목 없음)",c.photos.length,c.cover));
+    }
+    if(cat){
+      const addc=document.createElement("button");addc.className="addbtn";addc.style.cssText="margin-top:2px;padding:.4rem;font-size:.8rem";
+      addc.textContent="+ 여기에 컬렉션";addc.onclick=()=>addCollection(cat);s.appendChild(addc);
+    }
   }
-  const add=document.createElement("button");add.className="addbtn";add.textContent="+ 새 컬렉션";add.onclick=addCollection;s.appendChild(add);
+
+  const sep=document.createElement("div");sep.style.height="8px";s.appendChild(sep);
+  const addcat=document.createElement("button");addcat.className="addbtn";addcat.textContent="+ 새 카테고리(폴더)";addcat.onclick=addCategory;s.appendChild(addcat);
+  const add=document.createElement("button");add.className="addbtn";add.textContent="+ 새 컬렉션";add.onclick=()=>addCollection("");s.appendChild(add);
 }
 function makeSideItem(id,label,count,cover){
   const el=document.createElement("div");el.className="coll"+(view===id?" active":"");
@@ -210,6 +237,13 @@ function renderMeta(){
   if(view==="unassigned")return;
   const c=coll(view);if(!c)return;
   const box=document.createElement("div");box.className="meta";
+  // 카테고리(폴더) 선택 — 맨 앞에
+  const lcat=document.createElement("label");lcat.textContent="카테고리(폴더)";
+  const scat=document.createElement("select");
+  const o0=document.createElement("option");o0.value="";o0.textContent="(없음)";if(!c.category)o0.selected=true;scat.appendChild(o0);
+  for(const cc of allCategories()){const o=document.createElement("option");o.value=cc;o.textContent=cc;if(c.category===cc)o.selected=true;scat.appendChild(o)}
+  scat.onchange=()=>{c.category=scat.value;scheduleSave();renderSide()};
+  lcat.appendChild(scat);box.appendChild(lcat);
   const field=(key,label,type="text",opts)=>{
     const l=document.createElement("label");l.textContent=label;
     let inp;
