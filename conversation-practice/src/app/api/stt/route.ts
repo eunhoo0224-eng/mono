@@ -5,8 +5,13 @@ import { transcribe } from '@/lib/providers/stt';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
+  let form: FormData;
   try {
-    const form = await req.formData();
+    form = await req.formData();
+  } catch {
+    return NextResponse.json({ error: 'multipart/form-data(file) 요청이 아닙니다.' }, { status: 400 });
+  }
+  try {
     const file = form.get('file');
     if (!(file instanceof Blob)) {
       return NextResponse.json({ error: 'file 이 없습니다.' }, { status: 400 });
