@@ -1,0 +1,27 @@
+{
+  "name": "conversation-practice",
+  "version": "0.1.0",
+  "private": true,
+  "description": "혼자서 대화를 연습하는 웹앱 — 음성 대화 + 행동 지표. 명세: 제작 명세.md",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:sycophancy": "vitest run tests/sycophancy.test.ts"
+  },
+  "dependencies": {
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.5"
+  }
+}

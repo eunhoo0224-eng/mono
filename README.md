@@ -1,9 +1,10 @@
 # mono
 
-이 저장소는 두 프로젝트를 담는다.
+이 저장소는 세 프로젝트를 담는다.
 
 - [`archive_tool/`](./archive_tool) — `photo-archive/` 정리 CLI (아래 설명)
 - [`photo-site/`](./photo-site) — 사진 포트폴리오 웹사이트. 사용법은 [`photo-site/README.md`](./photo-site/README.md) 참고.
+- [`conversation-practice/`](./conversation-practice) — 대화 연습 웹앱(음성 대화 + 행동 지표). 사용법은 [`conversation-practice/README.md`](./conversation-practice/README.md) 참고.
 
 두 프로젝트는 `archive-tool export`가 만드는 `20_web/` 웹용 사본을 통해서만 연결된다 —
 `photo-site`는 원본(RAW)을 절대 갖지 않는다.
