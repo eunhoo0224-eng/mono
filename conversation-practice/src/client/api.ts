@@ -15,9 +15,20 @@ export async function fetchPersona(scenarioId: string): Promise<{
   return res.json();
 }
 
+// 브라우저마다 녹음 포맷이 다르다(Chrome=webm/opus, iPad Safari=mp4). STT
+// 제공자가 포맷을 오인하지 않게 blob.type 에 맞는 파일명을 붙인다.
+function blobFilename(blob: Blob): string {
+  const t = blob.type || '';
+  if (t.includes('mp4') || t.includes('m4a') || t.includes('aac')) return 'turn.mp4';
+  if (t.includes('mpeg') || t.includes('mp3')) return 'turn.mp3';
+  if (t.includes('ogg')) return 'turn.ogg';
+  if (t.includes('wav')) return 'turn.wav';
+  return 'turn.webm';
+}
+
 export async function transcribeBlob(blob: Blob): Promise<string> {
   const fd = new FormData();
-  fd.append('file', blob, 'turn.webm');
+  fd.append('file', blob, blobFilename(blob));
   const res = await fetch('/api/stt', { method: 'POST', body: fd });
   if (!res.ok) throw new Error((await res.json()).error ?? 'STT 실패');
   return (await res.json()).text as string;

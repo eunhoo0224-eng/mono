@@ -62,6 +62,31 @@ npm run dev                   # http://localhost:3000
 
 ---
 
+## 아이패드에서 쓰기 (맥 + cloudflared 터널)
+
+아이패드는 서버를 직접 못 돌린다. **맥에서 서버를 켜고 HTTPS 터널로 아이패드가
+접속**한다. (아이패드 Safari 는 마이크에 HTTPS 가 필수라 `http://맥주소:3000`
+같은 평문 접속은 마이크가 막힌다.)
+
+준비 (맥, 한 번만):
+```bash
+brew install cloudflared          # 터널
+# (로컬 STT 쓸 때) pip install flask mlx-whisper && brew install ffmpeg
+```
+`.env.local` 에 키를 채운다. 로컬 whisper 를 STT 로 쓰려면 `STT_PROVIDER=local`.
+
+실행: **`대화연습-시작.command` 를 더블클릭**한다. 이 런처가
+- 의존성 설치(처음 한 번), `STT_PROVIDER=local` 이면 `tools/local_stt_server.py`(mlx-whisper) 기동,
+- `next dev` 기동, cloudflared 터널 오픈,
+- **아이패드용 `https://…trycloudflare.com` 주소를 창에 크게 출력**한다.
+
+아이패드 Safari 로 그 주소를 열고 마이크 권한을 허용하면 끝. 끄려면 그 창에서
+Ctrl-C. (터널 주소는 실행할 때마다 바뀐다 — 고정 주소가 필요하면 Vercel 배포를
+권한다.)
+
+> **로컬 STT 서버 단독 실행**: `python3 tools/local_stt_server.py` (기본 포트
+> 8123, `LOCAL_STT_URL` 기본값과 일치). `POST multipart(file) → {"text":…}`.
+
 ## 아첨 방지 회귀 테스트 (명세 9절 / 검수 7)
 
 ```bash
