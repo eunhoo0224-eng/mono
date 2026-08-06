@@ -1,0 +1,135 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --panel-2: #1e222b;
+  --border: #2a2f3a;
+  --text: #e7e9ee;
+  --muted: #9aa2b1;
+  --accent: #6ea8fe;
+  --accent-dim: #3b5a9a;
+  --warn: #e0a34e;
+  --danger: #d96a6a;
+  --ok: #6bbf8a;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
+    'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+  min-height: 100vh;
+}
+
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 16px; margin: 24px 0 8px; color: var(--muted); font-weight: 600; }
+p { line-height: 1.6; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 12px 0;
+}
+
+label { display: block; font-size: 14px; margin: 14px 0 6px; color: var(--text); }
+
+select, input[type='text'], textarea {
+  width: 100%;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+}
+
+input[type='range'] { width: 100%; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 12px 18px;
+  font-size: 15px;
+  transition: background 0.12s, border-color 0.12s;
+}
+button:hover { border-color: var(--accent-dim); }
+button:disabled { opacity: 0.45; cursor: default; }
+
+.btn-primary {
+  background: var(--accent);
+  color: #0b1220;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+.btn-big { font-size: 20px; padding: 18px 28px; width: 100%; }
+.btn-danger { color: var(--danger); border-color: #402a2a; }
+
+.row { display: flex; gap: 10px; align-items: center; }
+.row-between { display: flex; justify-content: space-between; align-items: center; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.radio-row { display: flex; gap: 8px; }
+.radio-row button.active { background: var(--accent-dim); border-color: var(--accent); }
+
+/* ── 대화 화면 ─────────────────────────────── */
+.turn-counter { font-size: 14px; color: var(--muted); }
+.stage {
+  min-height: 44vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  padding: 20px 0;
+}
+.bubble-persona { font-size: 26px; line-height: 1.5; }
+.bubble-user { font-size: 18px; color: var(--muted); min-height: 26px; }
+.status-line { font-size: 14px; color: var(--muted); min-height: 20px; }
+
+.countdown-wrap { margin: 8px auto; max-width: 320px; }
+.countdown-bar {
+  height: 8px; background: var(--panel-2); border-radius: 4px; overflow: hidden;
+}
+.countdown-fill { height: 100%; background: var(--warn); transition: width 0.1s linear; }
+.countdown-num { font-size: 13px; color: var(--warn); margin-top: 4px; }
+
+.controls { display: flex; gap: 10px; margin-top: 18px; }
+.controls .btn-big { flex: 2; }
+.controls .btn-secondary { flex: 1; }
+
+/* ── 결과 화면 ─────────────────────────────── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 600; }
+.quote { padding: 8px 12px; border-left: 3px solid var(--accent-dim); margin: 6px 0; background: var(--panel-2); border-radius: 0 6px 6px 0; }
+.quote .note { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.quote.excluded { border-left-color: #4a4f5a; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; background: var(--panel-2); border: 1px solid var(--border); }
+.warn-badge { color: var(--warn); border-color: var(--warn); }
+
+details.limits { margin-top: 16px; }
+details.limits summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+details.limits ul { margin: 8px 0 0; padding-left: 18px; }
+details.limits li { margin: 6px 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+.error { color: var(--danger); font-size: 14px; }
+.spinner { color: var(--muted); }
