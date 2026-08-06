@@ -59,6 +59,15 @@ export async function createRecorder(micStream: MediaStream): Promise<RecorderHa
     isPlaying: () => playing,
 
     playTts: async (audio: ArrayBuffer) => {
+      // iOS Safari 는 오디오를 suspended 로 두는 경우가 있다(백그라운드 복귀 등).
+      // 재생 직전 깨워 AI 음성이 무음이 되지 않게 한다.
+      if (ctx.state === 'suspended') {
+        try {
+          await ctx.resume();
+        } catch {
+          /* 제스처가 없으면 실패할 수 있다 — 아래 gesture 언락이 보완 */
+        }
+      }
       const buf = await ctx.decodeAudioData(audio.slice(0));
       const src = ctx.createBufferSource();
       src.buffer = buf;

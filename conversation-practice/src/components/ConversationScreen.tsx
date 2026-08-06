@@ -60,6 +60,11 @@ export function ConversationScreen({ config, scenario, persona, responsiveness, 
         });
         micStreamRef.current = stream;
         recorderRef.current = await createRecorder(stream);
+        // iOS 오디오 언락: 대화 화면에서의 첫 탭에 AudioContext 를 깨운다.
+        // (마이크 권한 탭으로 대개 이미 열리지만, 확실히 하기 위한 보완)
+        const unlock = () => recorderRef.current?.ctx.resume().catch(() => {});
+        document.addEventListener('pointerdown', unlock, { once: true });
+        document.addEventListener('touchend', unlock, { once: true });
         detectorRef.current = new SilenceDetector(
           recorderRef.current.ctx,
           recorderRef.current.micSource,
