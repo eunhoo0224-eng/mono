@@ -37,6 +37,15 @@ export async function POST(req: NextRequest) {
     });
 
     const partial = parseJsonLoose<Partial<Metrics>>(raw);
+
+    // speechRatio 는 순수 산수이므로 LLM 추정 대신 실제 발화 길이로 계산한다
+    // (회차 간 일관성·정확성). 공백 제외 글자 수 기준.
+    const charCount = (speaker: 'user' | 'persona') =>
+      turns
+        .filter((t) => t.speaker === speaker)
+        .reduce((sum, t) => sum + (t.text ?? '').replace(/\s/g, '').length, 0);
+    const speechRatio = { user: charCount('user'), persona: charCount('persona') };
+
     // responsiveness 는 코드가 채운다(세션에서 뽑은 실제 값, D2 공개).
     const metrics: Metrics = {
       followUpQuestions: partial.followUpQuestions ?? { count: 0, total: 0, items: [] },
@@ -46,7 +55,7 @@ export async function POST(req: NextRequest) {
         persona: { fact: 0, opinion: 0, feeling: 0, value: 0 },
       },
       openedFirst: partial.openedFirst ?? { count: 0, attempts: 0, items: [] },
-      speechRatio: partial.speechRatio ?? { user: 0, persona: 0 },
+      speechRatio,
       deepestLayer: partial.deepestLayer ?? { layer: 'fact', atTurn: 0 },
       responsiveness,
       agreementRate: partial.agreementRate ?? 0,

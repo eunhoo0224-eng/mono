@@ -92,7 +92,9 @@ export function ConversationScreen({ config, scenario, persona, responsiveness, 
   async function runPersonaTurn(closing: boolean) {
     setPhaseSafe('persona_speaking');
     setCountdownMs(null);
-    setUserLive('');
+    // userLive(직전 내 발화 인식 결과)는 여기서 지우지 않는다. 상대가 실제로
+    // 말하기 시작할 때(setPersonaText 직후) 지워, 응답을 기다리는 동안 내가 한
+    // 말이 화면에 남아 있게 한다. (명세 화면2: 내 발화 자막)
     const startedAt = performance.now();
     let res;
     try {
@@ -109,6 +111,7 @@ export function ConversationScreen({ config, scenario, persona, responsiveness, 
       return;
     }
     setPersonaText(res.text);
+    setUserLive(''); // 상대가 말하기 시작 → 내 발화 자막 정리
     let range: [number, number] | undefined;
     try {
       if (res.audioBase64 && recorderRef.current) {
@@ -197,6 +200,7 @@ export function ConversationScreen({ config, scenario, persona, responsiveness, 
     }
     emptyRetriesRef.current = 0;
     setNotice('');
+    setUserLive(text); // 인식된 내 발화를 화면에 표시(인식 확인용, 명세 화면2)
 
     pushTurn({
       index: indexRef.current++,
